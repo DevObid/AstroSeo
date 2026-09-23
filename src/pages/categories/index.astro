@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const allReviews = await getCollection('reviews', ({ data }) => !data.draft);
+
+const categoryMeta: Record<string, string> = {
+  Writing: '✍️',
+  'Image Generation': '🎨',
+  Coding: '💻',
+  Video: '🎬',
+  Productivity: '⚡',
+  Chatbots: '💬',
+  Audio: '🎙️',
+  Marketing: '📈',
+};
+
+const categories = Object.entries(
+  allReviews.reduce<Record<string, number>>((acc, entry) => {
+    acc[entry.data.category] = (acc[entry.data.category] ?? 0) + 1;
+    return acc;
+  }, {})
+).sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout
+  title="Browse AI Tools by Category"
+  description="Explore AI tool and software reviews organized by category: writing, coding, image generation, video, productivity, chatbots, audio, and marketing."
+>
+  <section class="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+    <h1 class="font-display text-3xl font-bold text-ink-900 sm:text-4xl dark:text-white">Categories</h1>
+    <p class="mt-3 max-w-2xl text-slate-600 dark:text-slate-400">
+      Jump straight to the type of AI tool you're looking for.
+    </p>
+
+    <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {categories.map(([name, count]) => (
+        <a href={`/categories/${name.toLowerCase().replace(/\s+/g, '-')}`} class="glass-card flex items-center gap-4 p-6">
+          <span class="text-3xl">{categoryMeta[name] ?? '🤖'}</span>
+          <div>
+            <p class="font-display font-semibold text-ink-900 dark:text-white">{name}</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">{count} review{count === 1 ? '' : 's'}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

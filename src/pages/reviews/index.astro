@@ -1,0 +1,73 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ReviewCard from '../../components/ReviewCard.astro';
+
+const allReviews = (await getCollection('reviews', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const categories = ['All', ...new Set(allReviews.map((r) => r.data.category))];
+---
+
+<BaseLayout
+  title="All AI Tool Reviews"
+  description="Browse every AI tool and software review on AppScoutHub — writing, coding, image generation, video, productivity, and more."
+>
+  <section class="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+    <div class="max-w-2xl">
+      <h1 class="font-display text-3xl font-bold text-ink-900 sm:text-4xl dark:text-white">All Reviews</h1>
+      <p class="mt-3 text-slate-600 dark:text-slate-400">
+        {allReviews.length} hands-on reviews of the AI tools and software actually worth trying.
+      </p>
+    </div>
+
+    <div id="filters" class="mt-8 flex flex-wrap gap-2">
+      {categories.map((cat, i) => (
+        <button
+          type="button"
+          data-filter={cat}
+          class:list={[
+            'filter-btn rounded-full border px-4 py-1.5 text-sm font-medium transition-colors',
+            i === 0
+              ? 'border-brand-500 bg-brand-600 text-white'
+              : 'border-slate-200 text-slate-600 hover:border-brand-400 hover:text-brand-600 dark:border-white/10 dark:text-slate-300',
+          ]}
+        >
+          {cat}
+        </button>
+      ))}
+    </div>
+
+    <div id="review-grid" class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {allReviews.map((entry) => (
+        <div data-category={entry.data.category}>
+          <ReviewCard entry={entry} />
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  const buttons = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('#review-grid > div');
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const filter = btn.getAttribute('data-filter');
+
+      buttons.forEach((b) => {
+        b.classList.remove('border-brand-500', 'bg-brand-600', 'text-white');
+        b.classList.add('border-slate-200', 'text-slate-600', 'dark:border-white/10', 'dark:text-slate-300');
+      });
+      btn.classList.add('border-brand-500', 'bg-brand-600', 'text-white');
+      btn.classList.remove('border-slate-200', 'text-slate-600', 'dark:border-white/10', 'dark:text-slate-300');
+
+      cards.forEach((card) => {
+        const show = filter === 'All' || card.getAttribute('data-category') === filter;
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+</script>

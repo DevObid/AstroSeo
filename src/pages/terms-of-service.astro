@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const lastUpdated = 'March 1, 2025';
+---
+
+<BaseLayout
+  title="Terms of Service"
+  description="The terms and conditions governing your use of AppScoutHub, including disclaimers, affiliate disclosures, and limitations of liability."
+>
+  <section class="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+    <h1 class="font-display text-3xl font-bold text-ink-900 sm:text-4xl dark:text-white">Terms of Service</h1>
+    <p class="mt-2 text-sm text-slate-500 dark:text-slate-500">Last updated: {lastUpdated}</p>
+
+    <div class="prose prose-slate mt-8 max-w-none dark:prose-invert">
+      <p>
+        By accessing or using appscouthub.com (the "Site"), you agree to be bound by these Terms of Service. If you
+        do not agree with any part of these terms, please do not use the Site.
+      </p>
+
+      <h2>1. Use of the site</h2>
+      <p>
+        You agree to use this Site only for lawful purposes and in a way that does not infringe the rights of, or
+        restrict, or inhibit anyone else's use of the Site.
+      </p>
+
+      <h2>2. Content and accuracy</h2>
+      <p>
+        Reviews, ratings, and comparisons published on this Site reflect our own testing and opinions at the time of
+        writing. AI tools and their pricing change frequently — always verify current details directly with the
+        provider before making a purchasing decision. We make no warranties as to the completeness or accuracy of
+        any content on the Site.
+      </p>
+
+      <h2>3. Affiliate disclosure</h2>
+      <p>
+        Some links on this Site are affiliate links. We may earn a commission when you sign up or make a purchase
+        through these links, at no extra cost to you. Affiliate relationships never influence our ratings or
+        editorial opinions.
+      </p>
+
+      <h2>4. Intellectual property</h2>
+      <p>
+        All original content on this Site, including text, graphics, and logos, is the property of AppScoutHub
+        unless otherwise noted, and may not be reproduced without permission. Third-party product names, logos, and
+        trademarks belong to their respective owners.
+      </p>
+
+      <h2>5. Limitation of liability</h2>
+      <p>
+        AppScoutHub is not liable for any direct, indirect, incidental, or consequential damages resulting from your
+        use of the Site or reliance on any information published here, including decisions made about third-party
+        AI tools and software.
+      </p>
+
+      <h2>6. Third-party links</h2>
+      <p>
+        This Site links to third-party websites and services we do not control. We are not responsible for the
+        content, terms, or privacy practices of those external sites.
+      </p>
+
+      <h2>7. Changes to these terms</h2>
+      <p>
+        We may update these Terms of Service from time to time. Continued use of the Site after changes are posted
+        constitutes acceptance of the revised terms.
+      </p>
+
+      <h2>8. Contact</h2>
+      <p>
+        Questions about these terms? Reach out via our <a href="/contact">Contact page</a> or email{' '}
+        <a href="mailto:hello@appscouthub.com">hello@appscouthub.com</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
