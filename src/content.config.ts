@@ -29,6 +29,17 @@ const reviews = defineCollection({
       tags: z.array(z.string()).default([]),
       featured: z.boolean().default(false),
       draft: z.boolean().default(false),
+      landingStyle: z.boolean().default(false),
+      launchBanner: z.string().optional(),
+      ctaLabel: z.string().optional(),
+      pricingTiers: z
+        .array(
+          z.object({
+            name: z.string(),
+            price: z.string(),
+          })
+        )
+        .default([]),
     }),
 });
 

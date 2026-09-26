@@ -20,12 +20,35 @@ interface Props {
       pros: string[];
       cons: string[];
       tags: string[];
+      landingStyle?: boolean;
+      launchBanner?: string;
+      ctaLabel?: string;
+      pricingTiers?: { name: string; price: string }[];
     };
   };
 }
 
 const { entry } = Astro.props;
-const { title, description, toolName, category, pricing, websiteUrl, pubDate, updatedDate, heroImage, heroImageAlt, pros, cons, tags } = entry.data;
+const {
+  title,
+  description,
+  toolName,
+  category,
+  pricing,
+  websiteUrl,
+  pubDate,
+  updatedDate,
+  heroImage,
+  heroImageAlt,
+  pros,
+  cons,
+  tags,
+  landingStyle = false,
+  launchBanner,
+  ctaLabel,
+  pricingTiers = [],
+} = entry.data;
+const cta = ctaLabel ?? `Visit ${toolName}`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -85,12 +108,26 @@ const breadcrumbJsonLd = {
       </h1>
       <p class="mt-4 text-lg text-slate-600 dark:text-slate-400">{description}</p>
 
+      {landingStyle && launchBanner && (
+        <div class="mt-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
+          {launchBanner}
+        </div>
+      )}
+
       <div class="mt-6 flex flex-wrap items-center gap-4 text-sm">
         <span class="chip">{pricing}</span>
         <time datetime={pubDate.toISOString()} class="text-slate-500 dark:text-slate-500">
           Updated {(updatedDate ?? pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
         </time>
       </div>
+
+      {landingStyle && (
+        <div class="mt-6">
+          <a href={websiteUrl} target="_blank" rel="noopener noreferrer nofollow sponsored" class="btn-primary inline-flex">
+            {cta} →
+          </a>
+        </div>
+      )}
 
       {heroImage && (
         <Image
@@ -129,6 +166,23 @@ const breadcrumbJsonLd = {
         </div>
       </div>
 
+      {landingStyle && pricingTiers.length > 0 && (
+        <div class="mt-10">
+          <h2 class="font-display text-sm font-semibold uppercase tracking-wide text-ink-900 dark:text-white">Pricing Plans</h2>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {pricingTiers.map((tier) => (
+              <div class="glass-card flex flex-col gap-3 p-5">
+                <p class="font-display font-semibold text-ink-900 dark:text-white">{tier.name}</p>
+                <p class="text-2xl font-bold text-brand-600 dark:text-brand-300">{tier.price}</p>
+                <a href={websiteUrl} target="_blank" rel="noopener noreferrer nofollow sponsored" class="btn-secondary mt-auto text-center">
+                  Get {tier.name}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div class="prose prose-slate mt-10 max-w-none prose-headings:font-display prose-headings:font-semibold prose-a:text-brand-600 dark:prose-invert dark:prose-a:text-brand-300">
         <slot />
       </div>
@@ -139,7 +193,7 @@ const breadcrumbJsonLd = {
           <p class="text-sm text-slate-600 dark:text-slate-400">Visit the official site to explore plans and get started.</p>
         </div>
         <a href={websiteUrl} target="_blank" rel="noopener noreferrer nofollow sponsored" class="btn-primary whitespace-nowrap">
-          Visit {toolName}
+          {cta}
         </a>
       </div>
 
