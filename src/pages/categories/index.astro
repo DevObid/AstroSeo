@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const allReviews = await getCollection('reviews', ({ data }) => !data.draft);
+const allGuides = await getCollection('guides', ({ data }) => !data.draft);
 
 const categoryMeta: Record<string, string> = {
   Writing: '✍️',
@@ -16,7 +17,7 @@ const categoryMeta: Record<string, string> = {
 };
 
 const categories = Object.entries(
-  allReviews.reduce<Record<string, number>>((acc, entry) => {
+  [...allReviews, ...allGuides].reduce<Record<string, number>>((acc, entry) => {
     acc[entry.data.category] = (acc[entry.data.category] ?? 0) + 1;
     return acc;
   }, {})
@@ -39,7 +40,7 @@ const categories = Object.entries(
           <span class="text-3xl">{categoryMeta[name] ?? '🤖'}</span>
           <div>
             <p class="font-display font-semibold text-ink-900 dark:text-white">{name}</p>
-            <p class="text-sm text-slate-500 dark:text-slate-400">{count} review{count === 1 ? '' : 's'}</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">{count} article{count === 1 ? '' : 's'}</p>
           </div>
         </a>
       ))}

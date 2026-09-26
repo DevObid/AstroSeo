@@ -3,7 +3,6 @@ title: "ChatGPT Review 2025: Is OpenAI's Chatbot Still Worth It?"
 description: "We put ChatGPT Plus through months of daily use for writing, coding, and research. Here's our honest verdict on pricing, features, and limitations."
 toolName: "ChatGPT"
 category: "Chatbots"
-rating: 4.6
 pricing: "Free / $20 per month (Plus)"
 websiteUrl: "https://chat.openai.com"
 pubDate: 2025-01-12

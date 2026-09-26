@@ -1,0 +1,110 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from './BaseLayout.astro';
+import { SITE_TITLE, SITE_URL } from '../consts';
+
+interface Props {
+  entry: {
+    id: string;
+    data: {
+      title: string;
+      description: string;
+      category: string;
+      pubDate: Date;
+      updatedDate?: Date;
+      heroImage?: any;
+      heroImageAlt?: string;
+      tags: string[];
+    };
+  };
+}
+
+const { entry } = Astro.props;
+const { title, description, category, pubDate, updatedDate, heroImage, heroImageAlt, tags } = entry.data;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  author: {
+    '@type': 'Organization',
+    name: SITE_TITLE,
+  },
+  datePublished: pubDate.toISOString(),
+  ...(updatedDate ? { dateModified: updatedDate.toISOString() } : {}),
+  publisher: {
+    '@type': 'Organization',
+    name: SITE_TITLE,
+    url: SITE_URL,
+  },
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: 'Guides', item: `${SITE_URL}/guides` },
+    { '@type': 'ListItem', position: 3, name: title, item: `${SITE_URL}/guides/${entry.id}` },
+  ],
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={heroImage?.src}
+  type="article"
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+  jsonLd={[jsonLd, breadcrumbJsonLd]}
+>
+  <article class="bg-grid dark:bg-none">
+    <div class="mx-auto max-w-3xl px-4 pb-4 pt-10 sm:px-6 lg:px-8">
+      <nav class="mb-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400" aria-label="Breadcrumb">
+        <a href="/" class="hover:text-brand-600 dark:hover:text-brand-300">Home</a>
+        <span>/</span>
+        <a href="/guides" class="hover:text-brand-600 dark:hover:text-brand-300">Guides</a>
+        <span>/</span>
+        <span class="text-ink-800 dark:text-slate-200">{title}</span>
+      </nav>
+
+      <span class="chip">{category}</span>
+      <h1 class="mt-4 font-display text-3xl font-bold leading-tight text-ink-900 sm:text-4xl dark:text-white">
+        {title}
+      </h1>
+      <p class="mt-4 text-lg text-slate-600 dark:text-slate-400">{description}</p>
+
+      <div class="mt-6 flex flex-wrap items-center gap-4 text-sm">
+        <time datetime={pubDate.toISOString()} class="text-slate-500 dark:text-slate-500">
+          Updated {(updatedDate ?? pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </time>
+      </div>
+
+      {heroImage && (
+        <Image
+          src={heroImage}
+          alt={heroImageAlt ?? title}
+          width={900}
+          height={506}
+          class="mt-8 w-full rounded-2xl object-cover shadow-lg"
+        />
+      )}
+    </div>
+
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+      <div class="prose prose-slate mt-6 max-w-none prose-headings:font-display prose-headings:font-semibold prose-a:text-brand-600 dark:prose-invert dark:prose-a:text-brand-300">
+        <slot />
+      </div>
+
+      {tags.length > 0 && (
+        <div class="mb-16 mt-10 flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <span class="chip">#{tag}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  </article>
+</BaseLayout>

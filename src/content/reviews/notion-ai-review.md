@@ -3,7 +3,6 @@ title: "Notion AI Review: Is It Worth Adding to Your Workspace?"
 description: "Notion AI promises to summarize, write, and organize inside your existing docs. We tested it against dedicated writing tools to see if it holds up."
 toolName: "Notion AI"
 category: "Productivity"
-rating: 4.1
 pricing: "Add-on from $8 per member/month"
 websiteUrl: "https://www.notion.so/product/ai"
 pubDate: 2025-02-14

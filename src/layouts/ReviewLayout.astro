@@ -1,7 +1,6 @@
 ---
 import { Image } from 'astro:assets';
 import BaseLayout from './BaseLayout.astro';
-import RatingStars from '../components/RatingStars.astro';
 import { SITE_URL } from '../consts';
 
 interface Props {
@@ -12,12 +11,12 @@ interface Props {
       description: string;
       toolName: string;
       category: string;
-      rating: number;
       pricing: string;
       websiteUrl: string;
       pubDate: Date;
       updatedDate?: Date;
       heroImage?: any;
+      heroImageAlt?: string;
       pros: string[];
       cons: string[];
       tags: string[];
@@ -26,7 +25,7 @@ interface Props {
 }
 
 const { entry } = Astro.props;
-const { title, description, toolName, category, rating, pricing, websiteUrl, pubDate, updatedDate, heroImage, pros, cons, tags } = entry.data;
+const { title, description, toolName, category, pricing, websiteUrl, pubDate, updatedDate, heroImage, heroImageAlt, pros, cons, tags } = entry.data;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -40,12 +39,6 @@ const jsonLd = {
   author: {
     '@type': 'Organization',
     name: 'AppScoutHub',
-  },
-  reviewRating: {
-    '@type': 'Rating',
-    ratingValue: rating,
-    bestRating: 5,
-    worstRating: 0,
   },
   datePublished: pubDate.toISOString(),
   ...(updatedDate ? { dateModified: updatedDate.toISOString() } : {}),
@@ -70,6 +63,7 @@ const breadcrumbJsonLd = {
 <BaseLayout
   title={title}
   description={description}
+  image={heroImage?.src}
   type="article"
   publishedTime={pubDate}
   modifiedTime={updatedDate}
@@ -92,7 +86,6 @@ const breadcrumbJsonLd = {
       <p class="mt-4 text-lg text-slate-600 dark:text-slate-400">{description}</p>
 
       <div class="mt-6 flex flex-wrap items-center gap-4 text-sm">
-        <RatingStars rating={rating} size="md" />
         <span class="chip">{pricing}</span>
         <time datetime={pubDate.toISOString()} class="text-slate-500 dark:text-slate-500">
           Updated {(updatedDate ?? pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -102,7 +95,7 @@ const breadcrumbJsonLd = {
       {heroImage && (
         <Image
           src={heroImage}
-          alt={title}
+          alt={heroImageAlt ?? title}
           width={900}
           height={506}
           class="mt-8 w-full rounded-2xl object-cover shadow-lg"

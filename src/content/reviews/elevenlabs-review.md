@@ -3,7 +3,6 @@ title: "ElevenLabs Review: The Most Realistic AI Voice Generator?"
 description: "ElevenLabs has become the go-to for AI voice cloning and text-to-speech. We tested voice realism, cloning accuracy, and pricing for creators."
 toolName: "ElevenLabs"
 category: "Audio"
-rating: 4.5
 pricing: "Free / from $5 per month"
 websiteUrl: "https://elevenlabs.io"
 pubDate: 2025-03-01
