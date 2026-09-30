@@ -40,6 +40,14 @@ const reviews = defineCollection({
           })
         )
         .default([]),
+      screenshots: z
+        .array(
+          z.object({
+            image: image(),
+            caption: z.string().optional(),
+          })
+        )
+        .default([]),
     }),
 });
 

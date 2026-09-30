@@ -61,7 +61,7 @@ const currentPath = new URL(Astro.request.url).pathname;
     </div>
   </div>
 
-  <nav id="mobile-menu" class="hidden flex-col gap-1 border-t border-slate-200/70 px-4 py-3 md:hidden dark:border-white/10">
+  <nav id="mobile-menu" class="hidden flex flex-col gap-1 border-t border-slate-200/70 px-4 py-3 md:hidden dark:border-white/10">
     {navItems.map((item) => (
       <a href={item.href} class="rounded-lg px-3 py-2 text-sm font-medium text-ink-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/5">
         {item.label}

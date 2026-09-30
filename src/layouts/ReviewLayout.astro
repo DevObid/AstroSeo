@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from './BaseLayout.astro';
 import { SITE_URL } from '../consts';
 
@@ -24,6 +24,7 @@ interface Props {
       launchBanner?: string;
       ctaLabel?: string;
       pricingTiers?: { name: string; price: string }[];
+      screenshots?: { image: any; caption?: string }[];
     };
   };
 }
@@ -47,8 +48,20 @@ const {
   launchBanner,
   ctaLabel,
   pricingTiers = [],
+  screenshots = [],
 } = entry.data;
 const cta = ctaLabel ?? `Visit ${toolName}`;
+
+const screenshotFulls = await Promise.all(
+  screenshots.map(async (shot) => {
+    const srcWidth = shot.image.width ?? 1600;
+    const srcHeight = shot.image.height ?? Math.round(srcWidth * 0.5);
+    const targetWidth = Math.min(1600, srcWidth);
+    const targetHeight = Math.round((targetWidth / srcWidth) * srcHeight);
+    const full = await getImage({ src: shot.image, width: targetWidth, height: targetHeight });
+    return full.src;
+  })
+);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -138,6 +151,39 @@ const breadcrumbJsonLd = {
           class="mt-8 w-full rounded-2xl object-cover shadow-lg"
         />
       )}
+
+      {screenshots.length > 0 && (
+        <div class="mt-10">
+          <h2 class="font-display text-sm font-semibold uppercase tracking-wide text-ink-900 dark:text-white">Product Screenshots</h2>
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-500">Click any screenshot to view it full-size.</p>
+          <div class="mt-4 grid gap-5 sm:grid-cols-2">
+            {screenshots.map((shot, i) => (
+              <figure class="overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-md transition-shadow hover:shadow-xl dark:border-white/10 dark:bg-ink-900">
+                <button
+                  type="button"
+                  class="js-lightbox-trigger block w-full cursor-zoom-in"
+                  data-full={screenshotFulls[i]}
+                  data-alt={shot.caption ?? `${toolName} screenshot`}
+                  aria-label={`Enlarge screenshot: ${shot.caption ?? toolName}`}
+                >
+                  <Image
+                    src={shot.image}
+                    alt={shot.caption ?? `${toolName} screenshot`}
+                    width={640}
+                    height={Math.round((640 / (shot.image.width ?? 1920)) * (shot.image.height ?? 964))}
+                    class="w-full object-cover"
+                  />
+                </button>
+                {shot.caption && (
+                  <figcaption class="border-t border-slate-200/70 px-4 py-3 text-sm text-slate-600 dark:border-white/10 dark:text-slate-400">
+                    {shot.caption}
+                  </figcaption>
+                )}
+              </figure>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
 
     <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
@@ -206,4 +252,60 @@ const breadcrumbJsonLd = {
       )}
     </div>
   </article>
+
+  {screenshots.length > 0 && (
+    <div
+      id="screenshot-lightbox"
+      class="hidden fixed inset-0 z-50 items-center justify-center bg-black/90 p-4"
+    >
+      <button
+        id="screenshot-lightbox-close"
+        type="button"
+        aria-label="Close"
+        class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20"
+      >
+        &times;
+      </button>
+      <img id="screenshot-lightbox-img" src="" alt="" class="max-h-[90vh] max-w-full rounded-xl object-contain shadow-2xl" />
+    </div>
+  )}
+
+  <script>
+    const lightbox = document.getElementById('screenshot-lightbox');
+    const lightboxImg = document.getElementById('screenshot-lightbox-img');
+    const closeBtn = document.getElementById('screenshot-lightbox-close');
+
+    function openLightbox(src, alt) {
+      if (!lightbox || !lightboxImg) return;
+      lightboxImg.setAttribute('src', src);
+      lightboxImg.setAttribute('alt', alt);
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      if (!lightbox || !lightboxImg) return;
+      lightbox.classList.add('hidden');
+      lightbox.classList.remove('flex');
+      lightboxImg.setAttribute('src', '');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.js-lightbox-trigger').forEach((el) => {
+      el.addEventListener('click', () => {
+        const full = el.getAttribute('data-full');
+        const alt = el.getAttribute('data-alt') ?? '';
+        if (full) openLightbox(full, alt);
+      });
+    });
+
+    closeBtn?.addEventListener('click', closeLightbox);
+    lightbox?.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
 </BaseLayout>
