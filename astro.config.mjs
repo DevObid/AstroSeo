@@ -10,6 +10,10 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   site: 'https://appscouthub.com',
 
+  server: {
+    host: true,
+  },
+
   vite: {
     plugins: [tailwindcss()]
   },
